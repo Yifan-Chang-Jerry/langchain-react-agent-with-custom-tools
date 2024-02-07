@@ -1,17 +1,32 @@
-# This is a sample code for creating ReAct agent with Langchain
-**Here are some reminder:**
-The code is working with langchain packges:
+# Langchain ReAct Agent Sample Code
 
-*langchain-community==0.0.13*
+This repository contains sample code to demonstrate how to create a ReAct agent using Langchain. It's designed to be simple yet informative, guiding you through the essentials of integrating custom tools with Langchain.
 
-*langchain-core==0.1.13*
+## 🚀 Quick Start
 
-*langchain-openai==0.0.3*
+To get started with this sample, ensure you have the following Langchain packages installed:
 
-*langchain==0.1.1*
+- `langchain-community==0.0.13`
+- `langchain-core==0.1.13`
+- `langchain-openai==0.0.3`
+- `langchain==0.1.1`
 
-The LLM used in the sample code and other tools have api keys that need to be replaced. Check the comments in the code for detail.
+These packages are crucial for the functionality of the ReAct agent showcased in this sample.
 
-# NOTE
-The prompt used in the code has the throught chain with specified key words like: *Thought*, *Action* and so on. For some reason, the langchain agent wrapper is
-detecting such key words through output parser when executing. So try to follow the throught chain key words to custom your own prompt.
+## 🔑 API Keys Reminder
+
+The sample code utilizes LLMs and other tools that require API keys. **Remember to replace the placeholder keys with your own**. Detailed instructions and locations for these replacements are provided within the code comments.
+
+## 📘 Note on Prompts
+
+The code constructs prompts with a thought chain that includes specific keywords such as *Thought*, *Action*, etc. The Langchain agent wrapper is designed to recognize these keywords through its output parser during execution. To customize your prompts effectively, adhere to this thought chain structure and incorporate the mentioned keywords.
+
+---
+
+## Customizing Your Agent
+
+To make your agent truly yours, follow the structure provided and adjust the prompts according to your requirements. This flexibility allows you to experiment with different thought processes and action sequences, tailoring the agent's behavior to your specific needs.
+
+---
+
+Happy coding! 🎉
