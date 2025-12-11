@@ -1,0 +1,1638 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ex: <http://asiainfo.com/example-owl#> .
+
+##################################
+# 基础抽象类与通用语义（禁止变动）
+##################################
+ex:Entity a owl:Class ; rdfs:subClassOf prov:Entity ; rdfs:label "实体"@zh .
+ex:Object a owl:Class ; rdfs:subClassOf ex:Entity ; rdfs:label "本体对象"@zh .
+ex:Action a owl:Class ; rdfs:subClassOf prov:Activity ; rdfs:label "行动"@zh .
+ex:Logic a owl:Class ; rdfs:subClassOf prov:Activity ; rdfs:label "决策/逻辑函数"@zh .
+ex:hasPrimaryKey a owl:AnnotationProperty ; rdfs:label "主键属性"@zh ; rdfs:comment "在类级别声明该对象的主键数据属性"@zh .
+ex:hasTitle a owl:AnnotationProperty ; rdfs:label "标题属性"@zh ; rdfs:comment "在类级别声明该对象的标题数据属性"@zh .
+ex:bindAction a owl:ObjectProperty ; rdfs:label "本体对象关联行动"@zh ; rdfs:domain ex:Object ; rdfs:range ex:Action .
+ex:bindLogic a owl:ObjectProperty ; rdfs:label "本体对象关联函数"@zh ; rdfs:domain ex:Object ; rdfs:range ex:Logic .
+ex:custom_relation a owl:ObjectProperty ; rdfs:label "自定义对象与对象之间的关系"@zh .
+ex:Parameter a owl:Class ; rdfs:label "函数参数"@zh .
+ex:hasParameter a owl:ObjectProperty ; rdfs:label "有参数"@zh ; rdfs:domain ex:Logic ; rdfs:range ex:Parameter .
+ex:paramName a owl:DatatypeProperty ; rdfs:label "参数名"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:paramType a owl:DatatypeProperty ; rdfs:label "参数类型"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:paramTypeNode a owl:ObjectProperty ; rdfs:label "参数类型节点"@zh ; rdfs:domain ex:Parameter .
+ex:ListType a owl:Class ; rdfs:label "列表类型"@zh .
+ex:DictType a owl:Class ; rdfs:label "字典类型"@zh .
+ex:itemType a owl:DatatypeProperty ; rdfs:label "元素类型"@zh .
+ex:keyType a owl:DatatypeProperty ; rdfs:label "键类型"@zh .
+ex:valueType a owl:DatatypeProperty ; rdfs:label "值类型"@zh .
+ex:isOptional a owl:DatatypeProperty ; rdfs:label "是否可选"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:boolean .
+ex:defaultValue a owl:DatatypeProperty ; rdfs:label "默认值"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:ontologyName a owl:Class ; rdfs:label "本体名称"@zh .
+ex:domainAttribute a owl:AnnotationProperty ; rdfs:label "域属性"@zh ; rdfs:comment "指定对象属性的域端使用哪个数据属性建立关联"@zh .
+ex:rangeAttribute a owl:AnnotationProperty ; rdfs:label "值域属性"@zh ; rdfs:comment "指定对象属性的值域端使用哪个数据属性建立关联"@zh .
+ex:hasMiddleObject a owl:ObjectProperty ; rdfs:label "中间对象"@zh ; rdfs:comment "用来描述多对多关系的情况下，两个对象所使用到的中间对象"@zh .
+##################################
+# 本体名称
+##################################
+ex:sample a ex:ontologyName ;
+  rdfs:label "样例本体"@zh .
+
+##################################
+# 可用函数
+##################################
+ex:sample_logic a ex:Logic ;
+  rdfs:label "样例逻辑"@zh ;
+  rdfs:comment """@function_label: 样例逻辑
+    描述"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "name" ; ex:paramType "xsd:string" ; ex:isOptional false ] .
+
+##################################
+# Action动作定义
+##################################
+ex:sample_action a ex:Action ;
+  rdfs:label "样例动作"@zh ;
+  rdfs:comment """@action_label: 样例动作
+    描述"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "order_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] .
+
+ex:Order ex:bindAction ex:sample_action .
+
+##################################
+# 对象定义(必须继承ex:Object)
+##################################
+ex:CustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "客户规模"@zh ;
+  rdfs:label "CustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象大类 ;
+  rdfs:comment "客户的规模情况"@zh .
+
+ex:RevenueImpact a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "收入影响"@zh ;
+  rdfs:label "RevenueImpact"@en ;
+  ex:hasPrimaryKey ex:对象大类 ;
+  rdfs:comment "收入的影响情况"@zh .
+
+ex:CustomerBehavior a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "客户行为"@zh ;
+  rdfs:label "CustomerBehavior"@en ;
+  ex:hasPrimaryKey ex:对象大类 ;
+  rdfs:comment "客户的行为"@zh .
+
+ex:ChurnandDisconnection a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "流失与拆机"@zh ;
+  rdfs:label "ChurnandDisconnection"@en ;
+  ex:hasPrimaryKey ex:对象大类 ;
+  rdfs:comment "客户弃用并且拆机停服"@zh .
+
+ex:BroadbandCustomerRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "宽带客户收入"@zh ;
+  rdfs:label "BroadbandCustomerRevenue"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "来自宽带客户的收入"@zh .
+
+ex:BroadbandCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "宽带客户规模"@zh ;
+  rdfs:label "BroadbandCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "宽带客户的规模人数"@zh .
+
+ex:DowngradedCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "降档客户规模"@zh ;
+  rdfs:label "DowngradedCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "客户降档的人数"@zh .
+
+ex:ChinaTelecomPortout a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "电信携出"@zh ;
+  rdfs:label "ChinaTelecomPortout"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "用户转出电信网络"@zh .
+
+ex:DisconnectionVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "拆机量"@zh ;
+  rdfs:label "DisconnectionVolume"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "拆机的总数量"@zh .
+
+ex:ExistingCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "老客规模"@zh ;
+  rdfs:label "ExistingCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "老客户的规模人数"@zh .
+
+ex:ExistingCustomerRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "老客收入"@zh ;
+  rdfs:label "ExistingCustomerRevenue"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "来自老客户的收入"@zh .
+
+ex:ExistingCustomerChurnScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "老客流失规模"@zh ;
+  rdfs:label "ExistingCustomerChurnScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "老客户流失人数"@zh .
+
+ex:ChinaUnicomPortout a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "联通携出"@zh ;
+  rdfs:label "ChinaUnicomPortout"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "用户转出联通网络"@zh .
+
+ex:ChurnVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "离网量"@zh ;
+  rdfs:label "ChurnVolume"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "用户离网总数量"@zh .
+
+ex:PotentialCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "潜客规模"@zh ;
+  rdfs:label "PotentialCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "潜在客户的规模人数"@zh .
+
+ex:PrivilegeCustomerRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "权益客户收入"@zh ;
+  rdfs:label "PrivilegeCustomerRevenue"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "权益客户付费收入"@zh .
+
+ex:PrivilegeCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "权益客户规模"@zh ;
+  rdfs:label "PrivilegeCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "权益客户的规模人数"@zh .
+
+ex:ConvergedCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "融合客户规模"@zh ;
+  rdfs:label "ConvergedCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "融合业务客户数量"@zh .
+
+ex:ConvergedCustomerRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "融合客户收入"@zh ;
+  rdfs:label "ConvergedCustomerRevenue"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "来自融合业务客户的收入"@zh .
+
+ex:TotalCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "总客户规模"@zh ;
+  rdfs:label "TotalCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "总客户的规模人数"@zh .
+
+ex:TotalRevenueScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "总收入规模"@zh ;
+  rdfs:label "TotalRevenueScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "总收入的规模"@zh .
+
+ex:NewCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "新客规模"@zh ;
+  rdfs:label "NewCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "新客户的规模"@zh .
+
+ex:TerminalCustomerRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "终端客户收入"@zh ;
+  rdfs:label "TerminalCustomerRevenue"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "终端客户付费收入"@zh .
+
+ex:TerminalCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "终端客户规模"@zh ;
+  rdfs:label "TerminalCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "终端客户的规模大小"@zh .
+
+ex:UpgradedCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "升档客户规模"@zh ;
+  rdfs:label "UpgradedCustomerScale"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "升档客户的规模大小"@zh .
+
+ex:CompetitorInvasionVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "异网侵扰量"@zh ;
+  rdfs:label "CompetitorInvasionVolume"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "其他运营商用户转网至本网络的数量"@zh .
+
+ex:PortoutVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "携出量"@zh ;
+  rdfs:label "PortoutVolume"@en ;
+  ex:hasPrimaryKey ex:对象中类 ;
+  rdfs:comment "客户转出至其他运营商的数量"@zh .
+
+ex:TotalCustomerVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "总客户量"@zh ;
+  rdfs:label "TotalCustomerVolume"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "总客户的数量"@zh .
+
+ex:TotalRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "总收入"@zh ;
+  rdfs:label "TotalRevenue"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "总收入的大小"@zh .
+
+ex:GlobalSystemRetentionRate a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通规模保有率"@zh ;
+  rdfs:label "GlobalSystemRetentionRate"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通业务保留的客户数量和比例"@zh .
+
+ex:RevenueRetentionRate a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "收入保有率"@zh ;
+  rdfs:label "RevenueRetentionRate"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "收入实际保留比例"@zh .
+
+ex:TotalGlobalSystemCustomerCount a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通总客户数量"@zh ;
+  rdfs:label "TotalGlobalSystemCustomerCount"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通业务总客户的数量"@zh .
+
+ex:TotalGlobalSystemRevenue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通总收入"@zh ;
+  rdfs:label "TotalGlobalSystemRevenue"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通业务的总收入"@zh .
+
+ex:PotentialGlobalSystemBroadbandCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通宽带潜在客户数"@zh ;
+  rdfs:label "PotentialGlobalSystemBroadbandCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "符合全球通套餐条件但未使用宽带的用户数量"@zh .
+
+ex:PotentialGlobalSystemPrivilegeCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通权益潜在客户数"@zh ;
+  rdfs:label "PotentialGlobalSystemPrivilegeCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "符合全球通权益但未使用的用户数量"@zh .
+
+ex:PotentialGlobalSystemTerminalCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通终端潜在客户数"@zh ;
+  rdfs:label "PotentialGlobalSystemTerminalCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通未购终端潜在客户数"@zh .
+
+ex:NewGlobalSystemCustomerCount a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通新客数量"@zh ;
+  rdfs:label "NewGlobalSystemCustomerCount"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通新客户的数量"@zh .
+
+ex:ExistingGlobalSystemCustomerCount a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通老客数量"@zh ;
+  rdfs:label "ExistingGlobalSystemCustomerCount"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通老客户的数量"@zh .
+
+ex:RevenueContributionRateofExistingGlobalSystemCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通老客户收入占比"@zh ;
+  rdfs:label "RevenueContributionRateofExistingGlobalSystemCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通老客收入占总比"@zh .
+
+ex:RevenueContributionRateofGlobalSystemBroadbandCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通宽带客户收入占比"@zh ;
+  rdfs:label "RevenueContributionRateofGlobalSystemBroadbandCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通宽带客户的收入占比"@zh .
+
+ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通权益客户收入占比"@zh ;
+  rdfs:label "RevenueContributionRateofGlobalSystemPrivilegeCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通权益客户的收入占比"@zh .
+
+ex:RevenueContributionRateofGlobalSystemTerminalCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通终端客户收入占比"@zh ;
+  rdfs:label "RevenueContributionRateofGlobalSystemTerminalCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通终端客户的收入占比"@zh .
+
+ex:GlobalSystemConvergedCustomerScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通融合客户规模"@zh ;
+  rdfs:label "GlobalSystemConvergedCustomerScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通融合业务客户数"@zh .
+
+ex:RevenueContributionRateofGlobalSystemConvergedCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通融合客户收入占比"@zh ;
+  rdfs:label "RevenueContributionRateofGlobalSystemConvergedCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通融合客户的收入占比"@zh .
+
+ex:GlobalSystemUpgradeScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通升档规模"@zh ;
+  rdfs:label "GlobalSystemUpgradeScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通升档客户总数"@zh .
+
+ex:GlobalSystemDowngradeScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通降档规模"@zh ;
+  rdfs:label "GlobalSystemDowngradeScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通降档客户总数"@zh .
+
+ex:NumberofGlobalSystemBroadbandCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通客户宽带客户数"@zh ;
+  rdfs:label "NumberofGlobalSystemBroadbandCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通宽带用户数"@zh .
+
+ex:NumberofGlobalSystemPrivilegeCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通客户权益客户数"@zh ;
+  rdfs:label "NumberofGlobalSystemPrivilegeCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通权益客户总数量"@zh .
+
+ex:NumberofGlobalSystemTerminalCustomers a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通客户终端客户数"@zh ;
+  rdfs:label "NumberofGlobalSystemTerminalCustomers"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通终端客户总数量"@zh .
+
+ex:ExistingGlobalSystemCustomerChurnCount a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通老客流失数量"@zh ;
+  rdfs:label "ExistingGlobalSystemCustomerChurnCount"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通老客户流失数量"@zh .
+
+ex:GlobalSystemCompetitorInvasionVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通异网侵扰量"@zh ;
+  rdfs:label "GlobalSystemCompetitorInvasionVolume"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "异网转入全球通客户数"@zh .
+
+ex:GlobalSystemChinaUnicomInvasionVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通联通异网侵扰量"@zh ;
+  rdfs:label "GlobalSystemChinaUnicomInvasionVolume"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "联通转全球通用户数"@zh .
+
+ex:GlobalSystemChinaTelecomInvasionVolume a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通电信异网侵扰量"@zh ;
+  rdfs:label "GlobalSystemChinaTelecomInvasionVolume"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "电信转全球通用户数"@zh .
+
+ex:GlobalSystemCrossnetworkPortoutScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通异网携出规模"@zh ;
+  rdfs:label "GlobalSystemCrossnetworkPortoutScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通用户转出数量"@zh .
+
+ex:GlobalSystemChinaUnicomPortoutScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通联通携出规模"@zh ;
+  rdfs:label "GlobalSystemChinaUnicomPortoutScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通转联通用户数"@zh .
+
+ex:GlobalSystemChinaTelecomPortoutScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通电信携出规模"@zh ;
+  rdfs:label "GlobalSystemChinaTelecomPortoutScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通转电信用户数"@zh .
+
+ex:GlobalSystemDisconnectionScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通拆机规模"@zh ;
+  rdfs:label "GlobalSystemDisconnectionScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通销户数量"@zh .
+
+ex:GlobalSystemChurnScale a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "全球通离网规模"@zh ;
+  rdfs:label "GlobalSystemChurnScale"@en ;
+  ex:hasPrimaryKey ex:指标名称 ;
+  ex:hasTitle ex:时间 ;
+  rdfs:comment "全球通离网用户总数"@zh .
+
+ex:ScaleandValueRetentionResults a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "大类A：规模与价值保有结果"@zh ;
+  rdfs:label "ScaleandValueRetentionResults"@en ;
+  ex:hasPrimaryKey ex:分析维度大类 ;
+  rdfs:comment "大类A：规模价值保有成效"@zh .
+
+ex:ValueOperationandDeepBundling a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "大类B：价值经营与深度捆绑"@zh ;
+  rdfs:label "ValueOperationandDeepBundling"@en ;
+  ex:hasPrimaryKey ex:分析维度大类 ;
+  rdfs:comment "大类B：通过运营提升客户价值并强绑定"@zh .
+
+ex:ChurnRiskandCustomerRetention a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "大类C：流失风险与客户挽留"@zh ;
+  rdfs:label "ChurnRiskandCustomerRetention"@en ;
+  ex:hasPrimaryKey ex:分析维度大类 ;
+  rdfs:comment "大类C：识别流失风险并开展客户挽留"@zh .
+
+ex:PotentialDemandandCustomerExperience a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "大类D：潜在需求与客户体验"@zh ;
+  rdfs:label "PotentialDemandandCustomerExperience"@en ;
+  ex:hasPrimaryKey ex:分析维度大类 ;
+  rdfs:comment "大类D：挖掘潜在需求并优化客户体验"@zh .
+
+ex:OverallRetentionPerformance a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类A1：总体保有成效"@zh ;
+  rdfs:label "OverallRetentionPerformance"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类A1：客户整体留存的最终效果"@zh .
+
+ex:CustomerScaleandStructure a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类A2：客户规模与结构"@zh ;
+  rdfs:label "CustomerScaleandStructure"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类A2：客户总量及构成分布情况"@zh .
+
+ex:RevenueandCustomerValue a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类A3：收入与客户价值"@zh ;
+  rdfs:label "RevenueandCustomerValue"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类A3：营收情况及客户贡献价值"@zh .
+
+ex:UpgradeandDowngradeOperation a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类B1：升降档经营"@zh ;
+  rdfs:label "UpgradeandDowngradeOperation"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类B1：引导客户升级 / 降级产品与服务档位"@zh .
+
+ex:ChurnRiskEarlyWarning a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类C1：流失风险预警"@zh ;
+  rdfs:label "ChurnRiskEarlyWarning"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类C1：预判客户流失可能性并预警"@zh .
+
+ex:ActualChurnAnalysis a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类C2：实际流失分析"@zh ;
+  rdfs:label "ActualChurnAnalysis"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类C2：分析客户实际流失原因及情况"@zh .
+
+ex:PotentialCustomerMining a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "中类D1：潜在客户挖掘"@zh ;
+  rdfs:label "PotentialCustomerMining"@en ;
+  ex:hasPrimaryKey ex:分析维度中类 ;
+  rdfs:comment "中类D1：挖掘具有消费潜力的新客户"@zh .
+
+
+##################################
+# 数据属性定义
+# 每个对象的属性里，只能拥有一个primarykey
+##################################
+ex:对象大类 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:CustomerScale ex:RevenueImpact ex:CustomerBehavior ex:ChurnandDisconnection ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "以指标对象为分类依据的大类"@zh ;
+  rdfs:label "对象大类"@zh .
+
+ex:对象中类 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerRevenue ex:BroadbandCustomerScale ex:DowngradedCustomerScale ex:ChinaTelecomPortout ex:DisconnectionVolume ex:ExistingCustomerScale ex:ExistingCustomerRevenue ex:ExistingCustomerChurnScale ex:ChinaUnicomPortout ex:ChurnVolume ex:PotentialCustomerScale ex:PrivilegeCustomerRevenue ex:PrivilegeCustomerScale ex:ConvergedCustomerScale ex:ConvergedCustomerRevenue ex:TotalCustomerScale ex:TotalRevenueScale ex:NewCustomerScale ex:TerminalCustomerRevenue ex:TerminalCustomerScale ex:UpgradedCustomerScale ex:CompetitorInvasionVolume ex:PortoutVolume ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "以指标对象为分类依据的中类"@zh ;
+  rdfs:label "对象中类"@zh .
+
+ex:指标名称 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:TotalRevenue ex:GlobalSystemRetentionRate ex:RevenueRetentionRate ex:TotalGlobalSystemCustomerCount ex:TotalGlobalSystemRevenue ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ex:RevenueContributionRateofExistingGlobalSystemCustomers ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:GlobalSystemConvergedCustomerScale ex:RevenueContributionRateofGlobalSystemConvergedCustomers ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers ex:NumberofGlobalSystemTerminalCustomers ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "各个指标对象的名称"@zh ;
+  rdfs:label "指标名称"@zh .
+
+ex:分析维度大类 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ScaleandValueRetentionResults ex:ValueOperationandDeepBundling ex:ChurnRiskandCustomerRetention ex:PotentialDemandandCustomerExperience ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "以分析维度为分类依据的大类"@zh ;
+  rdfs:label "分析维度大类"@zh .
+
+ex:分析维度中类 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:OverallRetentionPerformance ex:CustomerScaleandStructure ex:RevenueandCustomerValue ex:UpgradeandDowngradeOperation ex:ChurnRiskEarlyWarning ex:ActualChurnAnalysis ex:PotentialCustomerMining ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "以分析维度为分类依据的中类"@zh ;
+  rdfs:label "分析维度中类"@zh .
+
+ex:时间 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:TotalRevenue ex:GlobalSystemRetentionRate ex:RevenueRetentionRate ex:TotalGlobalSystemCustomerCount ex:TotalGlobalSystemRevenue ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ex:RevenueContributionRateofExistingGlobalSystemCustomers ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:GlobalSystemConvergedCustomerScale ex:RevenueContributionRateofGlobalSystemConvergedCustomers ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers ex:NumberofGlobalSystemTerminalCustomers ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "能够获取各个时间的数据"@zh ;
+  rdfs:label "时间"@zh .
+
+ex:区域 a owl:DatatypeProperty ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemRetentionRate ex:RevenueRetentionRate ex:TotalGlobalSystemCustomerCount ex:TotalGlobalSystemRevenue ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:GlobalSystemUpgradeScale ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range xsd:string ;
+  rdfs:comment "能够获取各区县数据"@zh ;
+  rdfs:label "区域"@zh .
+
+##################################
+# 关系定义
+# 必须继承ex:custom_relation
+# 有正向关系就需定义一个反向关系
+##################################
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerScale ex:DowngradedCustomerScale ex:ExistingCustomerScale ex:ExistingCustomerChurnScale ex:PotentialCustomerScale ex:PrivilegeCustomerScale ex:ConvergedCustomerScale ex:TotalCustomerScale ex:NewCustomerScale ex:UpgradedCustomerScale ex:TerminalCustomerScale ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerScale ex:DowngradedCustomerScale ex:ExistingCustomerScale ex:ExistingCustomerChurnScale ex:PotentialCustomerScale ex:PrivilegeCustomerScale ex:ConvergedCustomerScale ex:TotalCustomerScale ex:NewCustomerScale ex:UpgradedCustomerScale ex:TerminalCustomerScale ) ] ;
+  rdfs:range ex:CustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerBehavior ;
+  rdfs:range ex:CompetitorInvasionVolume ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CompetitorInvasionVolume ;
+  rdfs:range ex:CustomerBehavior ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnandDisconnection ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:ChinaTelecomPortout ex:DisconnectionVolume ex:ChinaUnicomPortout ex:ChurnVolume ex:PortoutVolume ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ChinaTelecomPortout ex:DisconnectionVolume ex:ChinaUnicomPortout ex:ChurnVolume ex:PortoutVolume ) ] ;
+  rdfs:range ex:ChurnandDisconnection ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueImpact ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerRevenue ex:ExistingCustomerRevenue ex:PrivilegeCustomerRevenue ex:ConvergedCustomerRevenue ex:TotalRevenueScale ex:TerminalCustomerRevenue ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerRevenue ex:ExistingCustomerRevenue ex:PrivilegeCustomerRevenue ex:ConvergedCustomerRevenue ex:TotalRevenueScale ex:TerminalCustomerRevenue ) ] ;
+  rdfs:range ex:RevenueImpact ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ScaleandValueRetentionResults ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:OverallRetentionPerformance ex:CustomerScaleandStructure ex:RevenueandCustomerValue ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:OverallRetentionPerformance ex:CustomerScaleandStructure ex:RevenueandCustomerValue ) ] ;
+  rdfs:range ex:ScaleandValueRetentionResults ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ValueOperationandDeepBundling ;
+  rdfs:range ex:UpgradeandDowngradeOperation ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:UpgradeandDowngradeOperation ;
+  rdfs:range ex:ValueOperationandDeepBundling ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnRiskandCustomerRetention ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:ChurnRiskEarlyWarning ex:ActualChurnAnalysis ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ChurnRiskEarlyWarning ex:ActualChurnAnalysis ) ] ;
+  rdfs:range ex:ChurnRiskandCustomerRetention ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PotentialDemandandCustomerExperience ;
+  rdfs:range ex:PotentialCustomerMining ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PotentialCustomerMining ;
+  rdfs:range ex:PotentialDemandandCustomerExperience ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:DisconnectionVolume ;
+  rdfs:range ex:GlobalSystemDisconnectionScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemDisconnectionScale ;
+  rdfs:range ex:DisconnectionVolume ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChinaTelecomPortout ;
+  rdfs:range ex:GlobalSystemChinaTelecomPortoutScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemChinaTelecomPortoutScale ;
+  rdfs:range ex:ChinaTelecomPortout ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:DowngradedCustomerScale ;
+  rdfs:range ex:GlobalSystemDowngradeScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemDowngradeScale ;
+  rdfs:range ex:DowngradedCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BroadbandCustomerScale ;
+  rdfs:range ex:NumberofGlobalSystemBroadbandCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemBroadbandCustomers ;
+  rdfs:range ex:BroadbandCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BroadbandCustomerRevenue ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ;
+  rdfs:range ex:BroadbandCustomerRevenue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerScale ;
+  rdfs:range ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:range ex:ExistingCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerChurnScale ;
+  rdfs:range ex:ExistingGlobalSystemCustomerChurnCount ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingGlobalSystemCustomerChurnCount ;
+  rdfs:range ex:ExistingCustomerChurnScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerRevenue ;
+  rdfs:range ex:RevenueContributionRateofExistingGlobalSystemCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofExistingGlobalSystemCustomers ;
+  rdfs:range ex:ExistingCustomerRevenue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnVolume ;
+  rdfs:range ex:GlobalSystemChurnScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemChurnScale ;
+  rdfs:range ex:ChurnVolume ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChinaUnicomPortout ;
+  rdfs:range ex:GlobalSystemChinaUnicomPortoutScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemChinaUnicomPortoutScale ;
+  rdfs:range ex:ChinaUnicomPortout ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PotentialCustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ) ] ;
+  rdfs:range ex:PotentialCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PrivilegeCustomerScale ;
+  rdfs:range ex:NumberofGlobalSystemPrivilegeCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemPrivilegeCustomers ;
+  rdfs:range ex:PrivilegeCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PrivilegeCustomerRevenue ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ;
+  rdfs:range ex:PrivilegeCustomerRevenue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TerminalCustomerScale ;
+  rdfs:range ex:NumberofGlobalSystemTerminalCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemTerminalCustomers ;
+  rdfs:range ex:TerminalCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ConvergedCustomerScale ;
+  rdfs:range ex:GlobalSystemConvergedCustomerScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemConvergedCustomerScale ;
+  rdfs:range ex:ConvergedCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ConvergedCustomerRevenue ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemConvergedCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemConvergedCustomers ;
+  rdfs:range ex:ConvergedCustomerRevenue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:UpgradedCustomerScale ;
+  rdfs:range ex:GlobalSystemUpgradeScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemUpgradeScale ;
+  rdfs:range ex:UpgradedCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PortoutVolume ;
+  rdfs:range ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:range ex:PortoutVolume ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NewCustomerScale ;
+  rdfs:range ex:NewGlobalSystemCustomerCount ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NewGlobalSystemCustomerCount ;
+  rdfs:range ex:NewCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CompetitorInvasionVolume ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ) ] ;
+  rdfs:range ex:CompetitorInvasionVolume ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TerminalCustomerRevenue ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemTerminalCustomers ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemTerminalCustomers ;
+  rdfs:range ex:TerminalCustomerRevenue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:GlobalSystemRetentionRate ex:TotalGlobalSystemCustomerCount ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:GlobalSystemRetentionRate ex:TotalGlobalSystemCustomerCount ) ] ;
+  rdfs:range ex:TotalCustomerScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalRevenueScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:TotalRevenue ex:RevenueRetentionRate ex:TotalGlobalSystemRevenue ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalRevenue ex:RevenueRetentionRate ex:TotalGlobalSystemRevenue ) ] ;
+  rdfs:range ex:TotalRevenueScale ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:OverallRetentionPerformance ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:TotalRevenue ex:GlobalSystemRetentionRate ex:RevenueRetentionRate ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ex:RevenueContributionRateofExistingGlobalSystemCustomers ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalCustomerVolume ex:TotalRevenue ex:GlobalSystemRetentionRate ex:RevenueRetentionRate ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ex:RevenueContributionRateofExistingGlobalSystemCustomers ) ] ;
+  rdfs:range ex:OverallRetentionPerformance ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerScaleandStructure ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:TotalGlobalSystemCustomerCount ex:TotalGlobalSystemRevenue ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers ex:NumberofGlobalSystemTerminalCustomers ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:TotalGlobalSystemCustomerCount ex:TotalGlobalSystemRevenue ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers ex:NumberofGlobalSystemTerminalCustomers ) ] ;
+  rdfs:range ex:CustomerScaleandStructure ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueandCustomerValue ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:GlobalSystemConvergedCustomerScale ex:RevenueContributionRateofGlobalSystemConvergedCustomers ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:GlobalSystemConvergedCustomerScale ex:RevenueContributionRateofGlobalSystemConvergedCustomers ) ] ;
+  rdfs:range ex:RevenueandCustomerValue ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:UpgradeandDowngradeOperation ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ) ] ;
+  rdfs:range ex:UpgradeandDowngradeOperation ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnRiskEarlyWarning ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ex:GlobalSystemChurnScale ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCompetitorInvasionVolume ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range ex:ChurnRiskEarlyWarning ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ActualChurnAnalysis ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ex:GlobalSystemDisconnectionScale ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ex:GlobalSystemDisconnectionScale ) ] ;
+  rdfs:range ex:ActualChurnAnalysis ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:includes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PotentialCustomerMining ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ) ] ;
+  rdfs:label "包含"@zh ;
+  rdfs:comment "资源包含其他资源"@zh .
+
+ex:isPartof a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers ) ] ;
+  rdfs:range ex:PotentialCustomerMining ;
+  rdfs:label "属于"@zh ;
+  rdfs:comment "资源属于其他资源"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerVolume ;
+  rdfs:range ex:TotalRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalRevenue ;
+  rdfs:range ex:TotalCustomerVolume ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemRetentionRate ;
+  rdfs:range ex:RevenueRetentionRate ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueRetentionRate ;
+  rdfs:range ex:GlobalSystemRetentionRate ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalGlobalSystemCustomerCount ;
+  rdfs:range ex:TotalGlobalSystemRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalGlobalSystemRevenue ;
+  rdfs:range ex:TotalGlobalSystemCustomerCount ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers) ] ;
+  rdfs:range ex:NewGlobalSystemCustomerCount ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NewGlobalSystemCustomerCount ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:PotentialGlobalSystemBroadbandCustomers ex:PotentialGlobalSystemPrivilegeCustomers ex:PotentialGlobalSystemTerminalCustomers) ] ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:range ex:RevenueContributionRateofExistingGlobalSystemCustomers ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofExistingGlobalSystemCustomers ;
+  rdfs:range ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemBroadbandCustomers ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ;
+  rdfs:range ex:NumberofGlobalSystemBroadbandCustomers ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemPrivilegeCustomers ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ;
+  rdfs:range ex:NumberofGlobalSystemPrivilegeCustomers ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:NumberofGlobalSystemTerminalCustomers ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemTerminalCustomers ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemTerminalCustomers ;
+  rdfs:range ex:NumberofGlobalSystemTerminalCustomers ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemConvergedCustomerScale ;
+  rdfs:range ex:RevenueContributionRateofGlobalSystemConvergedCustomers ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueContributionRateofGlobalSystemConvergedCustomers ;
+  rdfs:range ex:GlobalSystemConvergedCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingGlobalSystemCustomerCount ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemUpgradeScale ex:GlobalSystemDowngradeScale ex:ExistingGlobalSystemCustomerChurnCount ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemCompetitorInvasionVolume ;
+  rdfs:range ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:range ex:GlobalSystemCompetitorInvasionVolume ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:RevenueContributionRateofGlobalSystemConvergedCustomers ) ] ;
+  rdfs:range ex:TotalGlobalSystemRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalGlobalSystemRevenue ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:RevenueContributionRateofGlobalSystemBroadbandCustomers ex:RevenueContributionRateofGlobalSystemPrivilegeCustomers ex:RevenueContributionRateofGlobalSystemTerminalCustomers ex:RevenueContributionRateofGlobalSystemConvergedCustomers ) ] ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BroadbandCustomerScale ;
+  rdfs:range ex:BroadbandCustomerRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BroadbandCustomerRevenue ;
+  rdfs:range ex:BroadbandCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerScale ;
+  rdfs:range ex:ExistingCustomerRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerRevenue ;
+  rdfs:range ex:ExistingCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PrivilegeCustomerScale ;
+  rdfs:range ex:PrivilegeCustomerRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PrivilegeCustomerRevenue ;
+  rdfs:range ex:PrivilegeCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ConvergedCustomerScale ;
+  rdfs:range ex:ConvergedCustomerRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ConvergedCustomerRevenue ;
+  rdfs:range ex:ConvergedCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerScale ;
+  rdfs:range ex:TotalRevenueScale ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalRevenueScale ;
+  rdfs:range ex:TotalCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TerminalCustomerScale ;
+  rdfs:range ex:TerminalCustomerRevenue ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TerminalCustomerRevenue ;
+  rdfs:range ex:TerminalCustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CompetitorInvasionVolume ;
+  rdfs:range ex:PortoutVolume ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PortoutVolume ;
+  rdfs:range ex:CompetitorInvasionVolume ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:UpgradedCustomerScale ex:DowngradedCustomerScale ex:ChurnVolume ex:DisconnectionVolume ex:PortoutVolume ) ] ;
+  rdfs:range ex:TotalCustomerScale ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:UpgradedCustomerScale ex:DowngradedCustomerScale ex:ChurnVolume ex:DisconnectionVolume ex:PortoutVolume ) ] ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerBehavior ;
+  rdfs:range ex:CustomerScale ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerScale ;
+  rdfs:range ex:CustomerBehavior ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerBehavior ;
+  rdfs:range ex:ChurnandDisconnection ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnandDisconnection ;
+  rdfs:range ex:CustomerBehavior ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ChurnandDisconnection ;
+  rdfs:range ex:CustomerScale ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerScale ;
+  rdfs:range ex:ChurnandDisconnection ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:affects a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CustomerScale ;
+  rdfs:range ex:RevenueImpact ;
+  rdfs:label "影响"@zh ;
+  rdfs:comment "资源影响其他资源"@zh .
+
+ex:isAffectedby a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RevenueImpact ;
+  rdfs:range ex:CustomerScale ;
+  rdfs:label "被影响"@zh ;
+  rdfs:comment "资源被其他资源影响"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ) ] ;
+  rdfs:range ex:TotalGlobalSystemCustomerCount ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalGlobalSystemCustomerCount ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:NewGlobalSystemCustomerCount ex:ExistingGlobalSystemCustomerCount ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers  ex:NumberofGlobalSystemTerminalCustomers  ex:GlobalSystemConvergedCustomerScale ) ] ;
+  rdfs:range ex:TotalGlobalSystemCustomerCount ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalGlobalSystemCustomerCount ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:NumberofGlobalSystemBroadbandCustomers ex:NumberofGlobalSystemPrivilegeCustomers  ex:NumberofGlobalSystemTerminalCustomers  ex:GlobalSystemConvergedCustomerScale ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ) ] ;
+  rdfs:range ex:GlobalSystemCompetitorInvasionVolume ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemCompetitorInvasionVolume ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemChinaUnicomInvasionVolume ex:GlobalSystemChinaTelecomInvasionVolume ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ) ] ;
+  rdfs:range ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:GlobalSystemCrossnetworkPortoutScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemChinaUnicomPortoutScale ex:GlobalSystemChinaTelecomPortoutScale ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:range ex:ExistingGlobalSystemCustomerChurnCount ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingGlobalSystemCustomerChurnCount ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:GlobalSystemCrossnetworkPortoutScale ex:GlobalSystemDisconnectionScale ex:GlobalSystemChurnScale ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerScale ex:PrivilegeCustomerScale ex:ConvergedCustomerScale  ex:TerminalCustomerScale ) ] ;
+  rdfs:range ex:TotalCustomerScale ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerScale ex:PrivilegeCustomerScale ex:ConvergedCustomerScale  ex:TerminalCustomerScale ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerRevenue ex:PrivilegeCustomerRevenue  ex:ConvergedCustomerRevenue  ex:TerminalCustomerRevenue ) ] ;
+  rdfs:range ex:TotalRevenueScale ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalRevenueScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:BroadbandCustomerRevenue ex:PrivilegeCustomerRevenue  ex:ConvergedCustomerRevenue  ex:TerminalCustomerRevenue ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ExistingCustomerScale ex:NewCustomerScale ) ] ;
+  rdfs:range ex:TotalCustomerScale ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:TotalCustomerScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:ExistingCustomerScale ex:NewCustomerScale ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:ChinaTelecomPortout ex:ChinaUnicomPortout ) ] ;
+  rdfs:range ex:PortoutVolume ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:PortoutVolume ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:ChinaTelecomPortout ex:ChinaUnicomPortout ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
+
+ex:constitutes a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain [ a owl:Class ; owl:unionOf ( ex:DisconnectionVolume ex:ChurnVolume ex:PortoutVolume ) ] ;
+  rdfs:range ex:ExistingCustomerChurnScale ;
+  rdfs:label "构成"@zh ;
+  rdfs:comment "资源构成其他资源"@zh .
+
+ex:splitsinto a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:ExistingCustomerChurnScale ;
+  rdfs:range [ a owl:Class ; owl:unionOf ( ex:DisconnectionVolume ex:ChurnVolume ex:PortoutVolume ) ] ;
+  rdfs:label "拆分"@zh ;
+  rdfs:comment "资源可拆分为其他资源"@zh .
